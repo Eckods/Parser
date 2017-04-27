@@ -1,0 +1,5 @@
+(:token 1 kwdstring)
+(:token 1 ident :ix 2 :str "x")
+(:token 1 equal)
+(:token 1 string :str "Hello world")
+(:token 1 semi)
