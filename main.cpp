@@ -40,11 +40,21 @@ struct Tokens
 	int tokenCount;
 };
 
+struct Nodez {
+	int id;			// 
+	string name;	// name of symbol
+	bool isTerm;	// is symbol term or not
+	int mtxID;		// row number in matrix
+	int tokenID;	// col number in matrix??
+	Node* kids[10];	// kids
+	int kidCount;	// number of kids
+};
+
 int tokenCount;
 vector<Tokens> tokens;
 vector<Syms*> symbols;
 vector<Rules*> rules;
-stack<Node> LLStack;
+stack<Nodez> LLStack;
 int ParseMatrix[21][23] =
 {
 /*Pgm*/		{1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
@@ -89,10 +99,10 @@ int main()
 	tokenCount = 0;
 
 	// Set up LL Parsing Stack
-	Node eof{ -1, {}, 0 };
-	LLStack.push(eof);
-	Node pgm{ 0, {}, 0 };
-	LLStack.push(pgm);
+	//Node eof{ -1, {}, 0 };
+	//LLStack.push(eof);
+	//Node pgm{ 0, {}, 0 };
+	//LLStack.push(pgm);
 
 	// Run the parser
 	parseMachine();
@@ -102,23 +112,31 @@ int main()
 
 void parseMachine() 
 {
-	while (tokenCount < tokens.size()) 
+	while (!LLStack.empty()) 
 	{
+		
 		// If end of file, pop off stack and done
 		if (LLStack.top().id == -1) 
 		{
 			LLStack.pop();
 		}
+		else if (LLStack.top().id == tokens[tokenCount].id)
+		{
+			LLStack.pop();
+			tokenCount++;
+			//getRules(LLStack.top().id);
+		}
 		else 
 		{
-			//getRules(LLStack.top().id);
+			//performRule(ParseMatrix[getRowNum(LLStack.top().name][tokens[tokenCount].id]);
 		}
 		//else if (LLStack.top() == )
 	}
 }
 
-void getRules(int rule) 
+void performRule(int rule) 
 {
+
 	/* CURRENTLY TRASH
 	switch (rule) {
 	case 0:
@@ -144,6 +162,52 @@ void getRules(int rule)
 		break;
 	}
 	*/
+}
+int getRowNum(string name)
+{
+	// Return a row number in parse matrix for the corresponding string
+	if (name == "Pgm")
+		return 0;
+	else if (name == "Block")
+		return 1;
+	else if (name == "Stmts")
+		return 2;
+	else if (name == "Stmt")
+		return 3;
+	else if (name == "Astmt")
+		return 4;
+	else if (name == "Y")
+		return 5;
+	else if (name == "Ostmt")
+		return 6;
+	else if (name == "Wstmt")
+		return 7;
+	else if (name == "Fstmt")
+		return 8;
+	else if (name == "Else2")
+		return 9;
+	else if (name == "Elist")
+		return 10;
+	else if (name == "Elist2")
+		return 11;
+	else if (name == "E'")
+		return 12;
+	else if (name == "E")
+		return 13;
+	else if (name == "T'")
+		return 14;
+	else if (name == "T")
+		return 15;
+	else if (name == "F")
+		return 16;
+	else if (name == "Pexpr")
+		return 17;
+	else if (name == "Fatom")
+		return 18;
+	else if (name == "Opadd")
+		return 19;
+	else if (name == "Opmul")
+		return 20;
 }
 
 vector<Tokens> tokenize()
