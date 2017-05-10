@@ -8,16 +8,9 @@
 
 using namespace std;
 
-struct Syms 
-{
-	int id;
-	string name;
-	bool isTerm;
-	int mtxID;
-	int tokenID;
-};
 
-struct Rules 
+
+struct Rules
 {
 	int id;
 	int lhs_symID;
@@ -25,14 +18,8 @@ struct Rules
 	int rhs_symCount;
 };
 
-struct Node 
-{
-	int id;
-	Node* kids[10];
-	int kidCount;
-};
 
-struct Tokens 
+struct Tokens
 {
 	int id;
 	string name;
@@ -40,51 +27,51 @@ struct Tokens
 	int tokenCount;
 };
 
-struct Nodez {
-	int id;			// 
+struct Syms {
 	string name;	// name of symbol
 	bool isTerm;	// is symbol term or not
-	int mtxID;		// row number in matrix
-	int tokenID;	// col number in matrix??
-	Node* kids[10];	// kids
+	vector<Syms> kids;	// kids
 	int kidCount;	// number of kids
 };
 
 int tokenCount;
 vector<Tokens> tokens;
-vector<Syms*> symbols;
-vector<Rules*> rules;
-stack<Nodez> LLStack;
+//vector<Syms*> symbols;
+//vector<Rules*> rules;
+stack<Syms> LLStack;
+
 int ParseMatrix[21][23] =
 {
-/*Pgm*/		{1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Block*/	{0,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Stmts*/	{0,	0,	3,	0,	4,	0,	0,	4,	0,	0,	4,	4,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Stmt*/	{0,	0,	0,	0,	5,	0,	0,	6,	0,	0,	7,	8,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Astmt*/	{0,	0,	0,	0,	9,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Y*/		{0,	0,	0,	0,	10,	0,	11,	0,	10,	0,	0,	0,	0,	0,	0,	10,	10,	10,	0,	0,	0,	0,	0},
-/*Ostmt*/	{0,	0,	0,	0,	0,	0,	0,	12,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Wstmt*/	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	13,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Fstmt*/	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	14,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Else2*/	{0,	0,	0,	15,	0,	0,	0,	0,	0,	0,	0,	0,	16,	17,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Elist*/	{0,	0,	0,	0,	18,	0,	0,	0,	18,	19,	0,	0,	0,	0,	0,	18,	18,	18,	0,	0,	0,	0,	0},
-/*Elist2*/	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0,	0,	0,	0},
-/*E'*/		{0,	0,	0,	20,	0,	0,	0,	0,	0,	21,	0,	0,	0,	0,	21,	0,	0,	0,	22,	22,	0,	0,	0},
-/*E*/		{0,	0,	0,	0,	23,	0,	0,	0,	23,	0,	0,	0,	0,	0,	0,	23,	23,	23,	0,	0,	0,	0,	0},
-/*T'*/		{0,	0,	0,	24,	0,	0,	0,	0,	0,	24,	0,	0,	0,	0,	24,	0,	0,	0,	24,	24,	25,	25,	25},
-/*T*/		{0,	0,	0,	0,	26,	0,	0,	0,	26,	0,	0,	0,	0,	0,	0,	26,	26,	26,	0,	0,	0,	0,	0},
-/*F*/		{0,	0,	0,	0,	27,	0,	0,	0,	28,	0,	0,	0,	0,	0,	0,	27,	27,	27,	0,	0,	0,	0,	0},
-/*Pexpr*/	{0,	0,	0,	0,	0,	0,	0,	0,	29,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0},
-/*Fatom*/	{0,	0,	0,	0,	30,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	31,	32,	33,	0,	0,	0,	0,	0},
-/*Opadd*/	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,	35,	0,	0,	0},
-/*Opmul*/	{0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	36,	37,	38}
+	/*Pgm*/{ 1,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Block*/{ 0,	2,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Stmts*/{ 0,	0,	3,	0,	4,	0,	0,	4,	0,	0,	4,	4,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Stmt*/{ 0,	0,	0,	0,	5,	0,	0,	6,	0,	0,	7,	8,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Astmt*/{ 0,	0,	0,	0,	9,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Y*/{ 0,	0,	0,	0,	10,	0,	11,	0,	10,	0,	0,	0,	0,	0,	0,	10,	10,	10,	0,	0,	0,	0,	0 },
+	/*Ostmt*/{ 0,	0,	0,	0,	0,	0,	0,	12,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Wstmt*/{ 0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	13,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Fstmt*/{ 0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	14,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Else2*/{ 0,	0,	0,	15,	0,	0,	0,	0,	0,	0,	0,	0,	16,	17,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Elist*/{ 0,	0,	0,	0,	18,	0,	0,	0,	18,	19,	0,	0,	0,	0,	0,	18,	18,	18,	0,	0,	0,	0,	0 },
+	/*Elist2*/{ 0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	20,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*E'*/{ 0,	0,	0,	20,	0,	0,	0,	0,	0,	21,	0,	0,	0,	0,	21,	0,	0,	0,	22,	22,	0,	0,	0 },
+	/*E*/{ 0,	0,	0,	0,	23,	0,	0,	0,	23,	0,	0,	0,	0,	0,	0,	23,	23,	23,	0,	0,	0,	0,	0 },
+	/*T'*/{ 0,	0,	0,	24,	0,	0,	0,	0,	0,	24,	0,	0,	0,	0,	24,	0,	0,	0,	24,	24,	25,	25,	25 },
+	/*T*/{ 0,	0,	0,	0,	26,	0,	0,	0,	26,	0,	0,	0,	0,	0,	0,	26,	26,	26,	0,	0,	0,	0,	0 },
+	/*F*/{ 0,	0,	0,	0,	27,	0,	0,	0,	28,	0,	0,	0,	0,	0,	0,	27,	27,	27,	0,	0,	0,	0,	0 },
+	/*Pexpr*/{ 0,	0,	0,	0,	0,	0,	0,	0,	29,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0 },
+	/*Fatom*/{ 0,	0,	0,	0,	30,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	31,	32,	33,	0,	0,	0,	0,	0 },
+	/*Opadd*/{ 0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	34,	35,	0,	0,	0 },
+	/*Opmul*/{ 0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	0,	36,	37,	38 }
 };
 
 //Function Prototypes
 void parseMachine();
-void getRules(int rule);
+//void getRules(int rule);
 vector<Tokens> tokenize();
 int getColNum(string name);
+int getRowNum(string name);
+void performRule(int rule);
 
 int main()
 {
@@ -93,7 +80,7 @@ int main()
 	lexer.runLexer();
 	system("cls"); // System call, I know, I know
 
-	// Tokenize the stream file
+				   // Tokenize the stream file
 	cout << "Converting lexer output into tokens" << endl;
 	tokens = tokenize();
 	tokenCount = 0;
@@ -104,64 +91,93 @@ int main()
 	//Node pgm{ 0, {}, 0 };
 	//LLStack.push(pgm);
 
+	Syms eof{ "$", true, {}, 0 };
+	LLStack.push(eof);
+
+	Syms pgm{ "Pgm", false, {}, 0 };
+	LLStack.push(pgm);
+
 	// Run the parser
 	parseMachine();
 
 	return 0;
 }
 
-void parseMachine() 
+void parseMachine()
 {
-	while (!LLStack.empty()) 
+	while (!LLStack.empty())
 	{
-		
+
 		// If end of file, pop off stack and done
-		if (LLStack.top().id == -1) 
+		if (LLStack.top().name == "eof")
 		{
 			LLStack.pop();
 		}
-		else if (LLStack.top().id == tokens[tokenCount].id)
-		{
-			LLStack.pop();
-			tokenCount++;
-			//getRules(LLStack.top().id);
+		else if (LLStack.top().isTerm == true)
+		{ 
+			if (LLStack.top().name == tokens[tokenCount].name)
+			{
+				LLStack.pop();
+				tokenCount++;
+				//getRules(LLStack.top().id);
+			}
+			else
+				cout << "Error on line number: " << tokens[tokenCount].lineNum << " with token:  " << tokens[tokenCount].name << endl;
 		}
-		else 
+		
+		else
 		{
-			//performRule(ParseMatrix[getRowNum(LLStack.top().name][tokens[tokenCount].id]);
+			performRule(ParseMatrix[getRowNum(LLStack.top().name)][tokens[tokenCount].id]);
 		}
 		//else if (LLStack.top() == )
 	}
 }
 
-void performRule(int rule) 
+void performRule(int rule)
 {
 
-	/* CURRENTLY TRASH
 	switch (rule) {
-	case 0:
+	case 1: // Pgm = kwdprog Block
 	{
+		Syms Block = { "Block", false, {}, 0 };
+		Syms kwdprog = { "kwdprog", true, {}, 0 };
+		LLStack.top().kids.push_back(kwdprog);
+		LLStack.top().kids.push_back(Block);
+
 		LLStack.pop();
-		Syms Block = { 2, "Block", false, 1, 0 };
-		Syms kwdprog = { 1, "prog", true, -1, 0 };
-		Node b = { 2, {}, 0 };
-		Node k = { 1, {}, 0 };
-		LLStack.push(k);
-		LLStack.push(b);
+		LLStack.push(Block);
+		LLStack.push(kwdprog);
+
 		break;
 	}
-	case 2:
+	case 2: //Block = brace1 Stmts brace2
+	{
+		Syms brace2 = { "brace2", true,{}, 0 };
+		Syms Stmts = { "Stmts", false,{}, 0 };
+		Syms brace1 = { "brace1", true,{}, 0 };
+		LLStack.top().kids.push_back(brace1);
+		LLStack.top().kids.push_back(Stmts);
+		LLStack.top().kids.push_back(brace2);
+
+		LLStack.pop();
+		LLStack.push(brace2);
+		LLStack.push(Stmts);
+		LLStack.push(brace1);
 		break;
+	}
+	case 13:
+
+
+	break;
 	case 3:
-		break;
+	break;
 	case 4:
-		break;
+	break;
 	case 5:
-		break;
+	break;
 	case 6:
-		break;
+	break;
 	}
-	*/
 }
 int getRowNum(string name)
 {
@@ -230,7 +246,7 @@ vector<Tokens> tokenize()
 	while (input.get(x))
 	{
 		// Once the 1st whitespace has been detected, locate and set line number for token
-		if (isspace(x) && hasNum == false) 
+		if (isspace(x) && hasNum == false)
 		{
 			x++;
 			input.get(x);
@@ -239,7 +255,7 @@ vector<Tokens> tokenize()
 			hasNum = true;
 		}
 		// Once the 2nd space has been detected, begin adding the characters of the name for the token name
-		else if (isspace(x) && foundName == false) 
+		else if (isspace(x) && foundName == false)
 		{
 			x++;
 			input.get(x);
@@ -247,7 +263,7 @@ vector<Tokens> tokenize()
 			foundName = true;
 		}
 		// Continue adding characters to the name unless a ) or whitespace has been detected
-		else if (isSet == false && foundName == true) 
+		else if (isSet == false && foundName == true)
 		{
 			if (x == ')' || isspace(x))
 				isSet = true;
@@ -256,9 +272,9 @@ vector<Tokens> tokenize()
 		}
 		// After the lineNum and name are set, call the getColNum function for the token id,
 		// reset the boolean values needed for next token check, and add token to the vector
-		else if (isSet == true) 
+		else if (isSet == true)
 		{
-			if (x == '\n') 
+			if (x == '\n')
 			{
 				hasNum = false;
 				foundName = false;
@@ -273,7 +289,7 @@ vector<Tokens> tokenize()
 	return outputTokens;
 }
 
-int getColNum(string name) 
+int getColNum(string name)
 {
 	// Return a column number in parse matrix for the corresponding string
 	if (name == "kwdprog")
