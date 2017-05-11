@@ -148,6 +148,8 @@ void initMatrix(list<symbols> box[][21])
     box[10][17].push_front(symbols::E);
 
 //Elist2
+    box[11][9].push_front(symbols::eps);
+
     box[11][14].push_front(symbols::Elist);
     box[11][14].push_front(symbols::comma);
 
