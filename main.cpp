@@ -165,18 +165,228 @@ void performRule(int rule)
 		LLStack.push(brace1);
 		break;
 	}
-	case 13:
+	/**********************************New Stuff Below for rule***************************************************/
 
-
-	break;
 	case 3:
-	break;
-	case 4:
-	break;
-	case 5:
-	break;
-	case 6:
-	break;
+	{
+		LLStack.pop();
+		break;
+	}
+
+
+	case 4: // Stmts = Stmt semi Stmt
+	{
+		//Idk if I should add Stmts = eps
+
+		Syms Stmt = { "Stmt", false, {}, 0 };
+		Syms semi = { "semi", true, {}, 0 };
+		Syms Stmts = { "Stmts", false, {}, 0 };
+		LLStack.top().kids.push_back(Stmt);
+		LLStack.top().kids.push_back(semi);
+		LLStack.top().kids.push_back(Stmts);
+
+		LLStack.pop();
+		LLStack.push(Stmt);
+		LLStack.push(semi);
+		LLStack.push(Stmts);
+		break;
+
+
+	}
+	case 5: //Stmt = Astmt
+	{
+		Syms Astmt = { "Astmt", false, {}, 0 };
+		LLStack.top().kids.push_back(Astmt);
+
+		LLStack.pop();
+		LLStack.push(Astmt);
+		break;
+	}
+	case 6: // Stmt = Ostmt
+	{
+		Syms Ostmt = { "Ostmt", false,{}, 0 };
+		LLStack.top().kids.push_back(Ostmt);
+
+		LLStack.pop();
+		LLStack.push(Ostmt);
+		break;
+	}
+
+	case 7: // Stmt = Wstmt
+	{
+		Syms Wstmt = { "Wstmt", false,{}, 0 };
+		LLStack.top().kids.push_back(Wstmt);
+
+		LLStack.pop();
+		LLStack.push(Wstmt);
+		break;
+	}
+	case 8: //Stmt = Fstmt
+	{
+		Syms Fstmt = { "Fstmt", false,{}, 0 };
+		LLStack.top().kids.push_back(Fstmt);
+
+		LLStack.pop();
+		LLStack.push(Fstmt);
+		break;
+	}
+	case 9: // Astmt = id equal Y
+	{
+		Syms id = { "id", true,{}, 0 };
+		Syms equal = { "equal", true,{}, 0 };
+		Syms Y = { "Y", false,{}, 0 };
+		LLStack.top().kids.push_back(id);
+		LLStack.top().kids.push_back(equal);
+		LLStack.top().kids.push_back(Y);
+
+		LLStack.pop();
+		LLStack.push(id);
+		LLStack.push(equal);
+		LLStack.push(Y);
+		break;
+
+	}
+	case 10: // Y = E
+	{
+		Syms E = { "E", false,{}, 0 };
+		LLStack.top().kids.push_back(E);
+
+		LLStack.pop();
+		LLStack.push(E);
+		break;
+	}
+	case 11: // Y = kwdinput
+	{
+		Syms kwdinput = { "kwdinput", true,{}, 0 };
+		LLStack.top().kids.push_back(kwdinput);
+
+		LLStack.pop();
+		LLStack.push(kwdinput);
+		break;
+	}
+	case 12: // Ostmt = kwdprint paren1 Elist paren2
+	{
+		Syms kwdinput = { "kwdinput", true,{}, 0 };
+		Syms paren1 = { "paren1", true,{}, 0 };
+		Syms Elist = { "Elist", false,{}, 0 };
+		Syms paren2 = { "paren2", true,{}, 0 };
+		LLStack.top().kids.push_back(kwdinput);
+		LLStack.top().kids.push_back(paren1);
+		LLStack.top().kids.push_back(Elist);
+		LLStack.top().kids.push_back(paren2);
+
+		LLStack.pop();
+		LLStack.push(kwdinput);
+		LLStack.push(paren1);
+		LLStack.push(Elist);
+		LLStack.push(paren1);
+		break;
+	}
+	case 13: // Wstmt = kwdwhile Pexpr Block
+	{
+		Syms kwdwhile = { "kwdwhile", true,{}, 0 };
+		Syms Pexpr = { "Pexpr", false,{}, 0 };
+		Syms Block = { "Block", false,{}, 0 };
+		LLStack.top().kids.push_back(kwdwhile);
+		LLStack.top().kids.push_back(Pexpr);
+		LLStack.top().kids.push_back(Block);
+
+		LLStack.pop();
+		LLStack.push(kwdwhile);
+		LLStack.push(Pexpr);
+		LLStack.push(Block);
+		break;
+	}
+	case 14: // Fstmt = kwdif Pexpr Block Else2
+	{
+		Syms kwdif = { "kwdif", true,{}, 0 };
+		Syms Pexpr = { "Pexpr", false,{}, 0 };
+		Syms Block = { "Block", false,{}, 0 };
+		Syms Else2 = { "Else2", false,{}, 0 };
+
+		LLStack.top().kids.push_back(kwdif);
+		LLStack.top().kids.push_back(Pexpr);
+		LLStack.top().kids.push_back(Block);
+		LLStack.top().kids.push_back(Else2);
+
+		LLStack.pop();
+		LLStack.push(kwdif);
+		LLStack.push(Pexpr);
+		LLStack.push(Block);
+		LLStack.push(Else2); 
+		break;
+	}
+	case 15: // Else2 = eps
+	{
+		LLStack.pop();
+		break;
+	}
+	case 16: //Else2 = kwdelseif Pexpr Block Else2
+	{	
+		Syms kwdelseif = { "kwdelseif", true,{}, 0 };
+		Syms Pexpr = { "Pexpr", false,{}, 0 };
+		Syms Block = { "Block", false,{}, 0 };
+		Syms Else2 = { "Else2", false,{}, 0 };
+
+		LLStack.top().kids.push_back(kwdelseif);
+		LLStack.top().kids.push_back(Pexpr);
+		LLStack.top().kids.push_back(Block);
+		LLStack.top().kids.push_back(Else2);
+
+		LLStack.pop();
+		LLStack.push(kwdelseif);
+		LLStack.push(Pexpr);
+		LLStack.push(Block);
+		LLStack.push(Else2);
+		break;
+	}
+	case 17: //Else2 = kwdelse Block
+	{
+		Syms kwdelse = { "kwdelse", true,{}, 0 };
+		Syms Block = { "Block", false,{}, 0 };
+
+		LLStack.top().kids.push_back(kwdelse);
+		LLStack.top().kids.push_back(Block);
+
+		LLStack.pop();
+		LLStack.push(kwdelse);
+		LLStack.push(Block);
+		break;
+	}
+	case 18: // Elist = E Elist2
+	{
+		Syms E = { "E", false,{}, 0 };
+		Syms Elist2 = { "Elist2", false,{}, 0 };
+
+		LLStack.top().kids.push_back(E);
+		LLStack.top().kids.push_back(Elist2);
+
+		LLStack.pop();
+		LLStack.push(E);
+		LLStack.push(Elist2);
+		break;
+	}
+	case 19: // Elist = eps
+	{
+		LLStack.pop();
+		break;
+	}
+	case 20: // Elist2 = comma Elist
+	{
+		Syms comma = { "comma", true,{}, 0 };
+		Syms Elist = { "Elist", false,{}, 0 };
+
+		LLStack.top().kids.push_back(comma);
+		LLStack.top().kids.push_back(Elist);
+
+		LLStack.pop();
+		LLStack.push(comma);
+		LLStack.push(Elist);
+		break;
+	}
+
+
+
 	}
 }
 int getRowNum(string name)
