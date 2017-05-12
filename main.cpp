@@ -2,42 +2,39 @@
 #include <fstream>
 #include <stack>
 #include <list>
-#include <vector>
 #include "lexer.h"
 #include <string>
+#include <queue>
 
 using namespace std;
 
-
-
-struct Rules
-{
-	int id;
-	int lhs_symID;
-	int rhs_symID[10];
-	int rhs_symCount;
-};
-
-
 struct Tokens
 {
-	int id;
+	//int id;
 	string name;
 	int lineNum;
-	int tokenCount;
+	//int tokenCount;
 };
 
 struct Syms {
 	string name;	// name of symbol
 	bool isTerm;	// is symbol term or not
-	vector<Syms> kids;	// kids
-	int kidCount;	// number of kids
+	//vector<Syms> kids;	// kids
+	//int kidCount;	// number of kids
+};
+
+struct Node {
+	int id = 0;
+	Syms symbol;
+	int ruleNum = 0;
+	Node* pMom;
+	Syms* pKids[4];
+	int kidCount = 0;
+	int position = 0;
 };
 
 int tokenCount;
-vector<Tokens> tokens;
-//vector<Syms*> symbols;
-//vector<Rules*> rules;
+queue<Tokens> tokens;
 stack<Syms> LLStack;
 
 int ParseMatrix[21][23] =
@@ -67,8 +64,7 @@ int ParseMatrix[21][23] =
 
 //Function Prototypes
 void parseMachine();
-//void getRules(int rule);
-vector<Tokens> tokenize();
+queue<Tokens> tokenize();
 int getColNum(string name);
 int getRowNum(string name);
 void performRule(int rule);
@@ -80,21 +76,16 @@ int main()
 	lexer.runLexer();
 	system("cls"); // System call, I know, I know
 
-				   // Tokenize the stream file
+	// Tokenize the stream file
 	cout << "Converting lexer output into tokens" << endl;
 	tokens = tokenize();
 	tokenCount = 0;
 
 	// Set up LL Parsing Stack
-	//Node eof{ -1, {}, 0 };
-	//LLStack.push(eof);
-	//Node pgm{ 0, {}, 0 };
-	//LLStack.push(pgm);
-
-	Syms eof{ "$", true, {}, 0 };
+	Syms eof{ "$", true };
 	LLStack.push(eof);
 
-	Syms pgm{ "Pgm", false, {}, 0 };
+	Syms pgm{ "Pgm", false };
 	LLStack.push(pgm);
 
 	// Run the parser
@@ -114,287 +105,228 @@ void parseMachine()
 			LLStack.pop();
 		}
 		else if (LLStack.top().isTerm == true)
-		{ 
-			if (LLStack.top().name == tokens[tokenCount].name)
+		{
+			if (LLStack.top().name == tokens.front().name)
 			{
 				LLStack.pop();
-				tokenCount++;
-				//getRules(LLStack.top().id);
+				tokens.pop();
 			}
 			else
-				cout << "Error on line number: " << tokens[tokenCount].lineNum << " with token:  " << tokens[tokenCount].name << endl;
+				cout << "Error on line number: " << tokens.front().lineNum << " with token:  " << tokens.front().name << endl;
 		}
-		
+
 		else
 		{
-			performRule(ParseMatrix[getRowNum(LLStack.top().name)][tokens[tokenCount].id]);
+			performRule(ParseMatrix[getRowNum(LLStack.top().name)][getColNum(tokens.front().name)]);
 		}
-		//else if (LLStack.top() == )
 	}
 }
 
 void performRule(int rule)
 {
 
-	switch (rule) {
-	case 1: // Pgm = kwdprog Block
+	switch (rule) 
 	{
-		Syms Block = { "Block", false, {}, 0 };
-		Syms kwdprog = { "kwdprog", true, {}, 0 };
-		LLStack.top().kids.push_back(kwdprog);
-		LLStack.top().kids.push_back(Block);
+		case 1: // Pgm = kwdprog Block
+		{
+			Syms Block = { "Block", false };
+			Syms kwdprog = { "kwdprog", true };
 
-		LLStack.pop();
-		LLStack.push(Block);
-		LLStack.push(kwdprog);
+			LLStack.pop();
+			LLStack.push(Block);
+			LLStack.push(kwdprog);
+			break;
+		}
+		case 2: // Block = brace1 Stmts brace2
+		{
+			Syms brace1 = { "brace1", true };
+			Syms Stmts = { "Stmts", false };
+			Syms brace2 = { "brace2", true };
 
-		break;
-	}
-	case 2: //Block = brace1 Stmts brace2
-	{
-		Syms brace2 = { "brace2", true,{}, 0 };
-		Syms Stmts = { "Stmts", false,{}, 0 };
-		Syms brace1 = { "brace1", true,{}, 0 };
-		LLStack.top().kids.push_back(brace1);
-		LLStack.top().kids.push_back(Stmts);
-		LLStack.top().kids.push_back(brace2);
+			LLStack.pop();
+			LLStack.push(brace2);
+			LLStack.push(Stmts);
+			LLStack.push(brace1);
+			break;
+		}
+		case 3: // Stmts = eps
+		{
+			LLStack.pop();
+			break;
+		}
+		case 4: // Stmts = Stmt semi Stmt
+		{
+			Syms Stmt = { "Stmt", false };
+			Syms semi = { "semi", true };
+			Syms Stmts = { "Stmts", false };
 
-		LLStack.pop();
-		LLStack.push(brace2);
-		LLStack.push(Stmts);
-		LLStack.push(brace1);
-		break;
-	}
-	/**********************************New Stuff Below for rule***************************************************/
+			LLStack.pop();
+			LLStack.push(Stmts);
+			LLStack.push(semi);
+			LLStack.push(Stmt);
+			break;
+		}
+		case 5: //Stmt = Astmt
+		{
+			Syms Astmt = { "Astmt", false };
 
-	case 3:
-	{
-		LLStack.pop();
-		break;
-	}
+			LLStack.pop();
+			LLStack.push(Astmt);
+			break;
+		}
+		case 6: // Stmt = Ostmt
+		{
+			Syms Ostmt = { "Ostmt", false };
 
+			LLStack.pop();
+			LLStack.push(Ostmt);
+			break;
+		}
 
-	case 4: // Stmts = Stmt semi Stmt
-	{
-		//Idk if I should add Stmts = eps
+		case 7: // Stmt = Wstmt
+		{
+			Syms Wstmt = { "Wstmt", false };
 
-		Syms Stmt = { "Stmt", false, {}, 0 };
-		Syms semi = { "semi", true, {}, 0 };
-		Syms Stmts = { "Stmts", false, {}, 0 };
-		LLStack.top().kids.push_back(Stmt);
-		LLStack.top().kids.push_back(semi);
-		LLStack.top().kids.push_back(Stmts);
+			LLStack.pop();
+			LLStack.push(Wstmt);
+			break;
+		}
+		case 8: // Stmt = Fstmt
+		{
+			Syms Fstmt = { "Fstmt", false };
 
-		LLStack.pop();
-		LLStack.push(Stmts);
-		LLStack.push(semi);
-		LLStack.push(Stmt);	
-		break;
+			LLStack.pop();
+			LLStack.push(Fstmt);
+			break;
+		}
+		case 9: // Astmt = id equal Y
+		{
+			Syms id = { "id", true };
+			Syms equal = { "equal", true };
+			Syms Y = { "Y", false };
 
+			LLStack.pop();
+			LLStack.push(Y);
+			LLStack.push(equal);
+			LLStack.push(id);
+			break;
+		}
+		case 10: // Y = E
+		{
+			Syms E = { "E", false };
 
-	}
-	case 5: //Stmt = Astmt
-	{
-		Syms Astmt = { "Astmt", false, {}, 0 };
-		LLStack.top().kids.push_back(Astmt);
+			LLStack.pop();
+			LLStack.push(E);
+			break;
+		}
+		case 11: // Y = kwdinput
+		{
+			Syms kwdinput = { "kwdinput", true };
 
-		LLStack.pop();
-		LLStack.push(Astmt);
-		break;
-	}
-	case 6: // Stmt = Ostmt
-	{
-		Syms Ostmt = { "Ostmt", false,{}, 0 };
-		LLStack.top().kids.push_back(Ostmt);
+			LLStack.pop();
+			LLStack.push(kwdinput);
+			break;
+		}
+		case 12: // Ostmt = kwdprint paren1 Elist paren2
+		{
+			Syms kwdinput = { "kwdinput", true };
+			Syms paren1 = { "paren1", true };
+			Syms Elist = { "Elist", false };
+			Syms paren2 = { "paren2", true };
 
-		LLStack.pop();
-		LLStack.push(Ostmt);
-		break;
-	}
+			LLStack.pop();
+			LLStack.push(paren2);
+			LLStack.push(Elist);
+			LLStack.push(paren1);
+			LLStack.push(kwdinput);
+			break;
+		}
+		case 13: // Wstmt = kwdwhile Pexpr Block
+		{
+			Syms kwdwhile = { "kwdwhile", true };
+			Syms Pexpr = { "Pexpr", false };
+			Syms Block = { "Block", false };
 
-	case 7: // Stmt = Wstmt
-	{
-		Syms Wstmt = { "Wstmt", false,{}, 0 };
-		LLStack.top().kids.push_back(Wstmt);
+			LLStack.pop();
+			LLStack.push(Block);
+			LLStack.push(Pexpr);
+			LLStack.push(kwdwhile);
+			break;
+		}
+		case 14: // Fstmt = kwdif Pexpr Block Else2
+		{
+			Syms kwdif = { "kwdif", true };
+			Syms Pexpr = { "Pexpr", false };
+			Syms Block = { "Block", false };
+			Syms Else2 = { "Else2", false };
 
-		LLStack.pop();
-		LLStack.push(Wstmt);
-		break;
-	}
-	case 8: //Stmt = Fstmt
-	{
-		Syms Fstmt = { "Fstmt", false,{}, 0 };
-		LLStack.top().kids.push_back(Fstmt);
+			LLStack.pop();
+			LLStack.push(Else2);
+			LLStack.push(Block);
+			LLStack.push(Pexpr);
+			LLStack.push(kwdif);
+			break;
+		}
+		case 15: // Else2 = eps
+		{
+			LLStack.pop();
+			break;
+		}
+		case 16: //Else2 = kwdelseif Pexpr Block Else2
+		{
+			Syms kwdelseif = { "kwdelseif", true };
+			Syms Pexpr = { "Pexpr", false };
+			Syms Block = { "Block", false };
+			Syms Else2 = { "Else2", false };
 
-		LLStack.pop();
-		LLStack.push(Fstmt);
-		break;
-	}
-	case 9: // Astmt = id equal Y
-	{
-		Syms id = { "id", true,{}, 0 };
-		Syms equal = { "equal", true,{}, 0 };
-		Syms Y = { "Y", false,{}, 0 };
-		LLStack.top().kids.push_back(id);
-		LLStack.top().kids.push_back(equal);
-		LLStack.top().kids.push_back(Y);
+			LLStack.pop();
+			LLStack.push(Else2);
+			LLStack.push(Block);
+			LLStack.push(Pexpr);
+			LLStack.push(kwdelseif);
+			break;
+		}
+		case 17: //Else2 = kwdelse Block
+		{
+			Syms kwdelse = { "kwdelse", true };
+			Syms Block = { "Block", false };
 
-		LLStack.pop();
-		LLStack.push(Y);
-		LLStack.push(equal);
-		LLStack.push(id);
+			LLStack.pop();
+			LLStack.push(Block);
+			LLStack.push(kwdelse);
+			break;
+		}
+		case 18: // Elist = E Elist2
+		{
+			Syms E = { "E", false };
+			Syms Elist2 = { "Elist2" };
 
-		break;
+			LLStack.pop();
+			LLStack.push(Elist2);
+			LLStack.push(E);
+			break;
+		}
+		case 19: // Elist = eps
+		{
+			LLStack.pop();
+			break;
+		}
+		case 20: // Elist2 = comma Elist
+		{
+			Syms comma = { "comma", true };
+			Syms Elist = { "Elist", false };
 
-	}
-	case 10: // Y = E
-	{
-		Syms E = { "E", false,{}, 0 };
-		LLStack.top().kids.push_back(E);
-
-		LLStack.pop();
-		LLStack.push(E);
-		break;
-	}
-	case 11: // Y = kwdinput
-	{
-		Syms kwdinput = { "kwdinput", true,{}, 0 };
-		LLStack.top().kids.push_back(kwdinput);
-
-		LLStack.pop();
-		LLStack.push(kwdinput);
-		break;
-	}
-	case 12: // Ostmt = kwdprint paren1 Elist paren2
-	{
-		Syms kwdinput = { "kwdinput", true,{}, 0 };
-		Syms paren1 = { "paren1", true,{}, 0 };
-		Syms Elist = { "Elist", false,{}, 0 };
-		Syms paren2 = { "paren2", true,{}, 0 };
-		LLStack.top().kids.push_back(kwdinput);
-		LLStack.top().kids.push_back(paren1);
-		LLStack.top().kids.push_back(Elist);
-		LLStack.top().kids.push_back(paren2);
-
-		LLStack.pop();
-		LLStack.push(paren2);
-		LLStack.push(Elist);
-		LLStack.push(paren1);
-		LLStack.push(kwdinput);
-		break;
-	}
-	case 13: // Wstmt = kwdwhile Pexpr Block
-	{
-		Syms kwdwhile = { "kwdwhile", true,{}, 0 };
-		Syms Pexpr = { "Pexpr", false,{}, 0 };
-		Syms Block = { "Block", false,{}, 0 };
-		LLStack.top().kids.push_back(kwdwhile);
-		LLStack.top().kids.push_back(Pexpr);
-		LLStack.top().kids.push_back(Block);
-
-		LLStack.pop();
-		LLStack.push(Block);
-		LLStack.push(Pexpr);
-		LLStack.push(kwdwhile);
-		break;
-	}
-	case 14: // Fstmt = kwdif Pexpr Block Else2
-	{
-		Syms kwdif = { "kwdif", true,{}, 0 };
-		Syms Pexpr = { "Pexpr", false,{}, 0 };
-		Syms Block = { "Block", false,{}, 0 };
-		Syms Else2 = { "Else2", false,{}, 0 };
-
-		LLStack.top().kids.push_back(kwdif);
-		LLStack.top().kids.push_back(Pexpr);
-		LLStack.top().kids.push_back(Block);
-		LLStack.top().kids.push_back(Else2);
-
-		LLStack.pop();
-		LLStack.push(Else2);
-		LLStack.push(Block);
-		LLStack.push(Pexpr);
-		LLStack.push(kwdif);
-
-		break;
-	}
-	case 15: // Else2 = eps
-	{
-		LLStack.pop();
-		break;
-	}
-	case 16: //Else2 = kwdelseif Pexpr Block Else2
-	{	
-		Syms kwdelseif = { "kwdelseif", true,{}, 0 };
-		Syms Pexpr = { "Pexpr", false,{}, 0 };
-		Syms Block = { "Block", false,{}, 0 };
-		Syms Else2 = { "Else2", false,{}, 0 };
-
-		LLStack.top().kids.push_back(kwdelseif);
-		LLStack.top().kids.push_back(Pexpr);
-		LLStack.top().kids.push_back(Block);
-		LLStack.top().kids.push_back(Else2);
-
-		LLStack.pop();
-		LLStack.push(Else2);
-		LLStack.push(Block);
-		LLStack.push(Pexpr);
-		LLStack.push(kwdelseif);
-
-		break;
-	}
-	case 17: //Else2 = kwdelse Block
-	{
-		Syms kwdelse = { "kwdelse", true,{}, 0 };
-		Syms Block = { "Block", false,{}, 0 };
-
-		LLStack.top().kids.push_back(kwdelse);
-		LLStack.top().kids.push_back(Block);
-
-		LLStack.pop();
-		LLStack.push(Block);
-		LLStack.push(kwdelse);
-		break;
-	}
-	case 18: // Elist = E Elist2
-	{
-		Syms E = { "E", false,{}, 0 };
-		Syms Elist2 = { "Elist2", false,{}, 0 };
-
-		LLStack.top().kids.push_back(E);
-		LLStack.top().kids.push_back(Elist2);
-
-		LLStack.pop();
-		LLStack.push(Elist2);
-		LLStack.push(E);
-		break;
-	}
-	case 19: // Elist = eps
-	{
-		LLStack.pop();
-		break;
-	}
-	case 20: // Elist2 = comma Elist
-	{
-		Syms comma = { "comma", true,{}, 0 };
-		Syms Elist = { "Elist", false,{}, 0 };
-
-		LLStack.top().kids.push_back(comma);
-		LLStack.top().kids.push_back(Elist);
-
-		LLStack.pop();
-		LLStack.push(Elist);
-		LLStack.push(comma);
-		break;
-	}
-
-
-
+			LLStack.pop();
+			LLStack.push(Elist);
+			LLStack.push(comma);
+			break;
+		}
 	}
 }
+
 int getRowNum(string name)
 {
-	// Return a row number in parse matrix for the corresponding string
+	// Return a row number in parse matrix for the non-terminal
 	if (name == "Pgm")
 		return 0;
 	else if (name == "Block")
@@ -439,14 +371,14 @@ int getRowNum(string name)
 		return 20;
 }
 
-vector<Tokens> tokenize()
+queue<Tokens> tokenize()
 {
 	char x;
 	bool hasNum = false;
 	bool isSet = false;
 	bool foundName = false;
 	Tokens token;
-	vector<Tokens> outputTokens;
+	queue<Tokens> outputTokens;
 	ifstream input("stream.txt");
 
 	if (!input.is_open())
@@ -492,8 +424,8 @@ vector<Tokens> tokenize()
 				hasNum = false;
 				foundName = false;
 				isSet = false;
-				token.id = getColNum(token.name);
-				outputTokens.push_back(token);
+				//token.id = getColNum(token.name);
+				outputTokens.push(token);
 				// Reset name for the next token
 				token.name = "";
 			}
@@ -504,7 +436,7 @@ vector<Tokens> tokenize()
 
 int getColNum(string name)
 {
-	// Return a column number in parse matrix for the corresponding string
+	// Return a column number in parse matrix for the token
 	if (name == "kwdprog")
 		return 0;
 	else if (name == "brace1")
