@@ -18,18 +18,36 @@ const char* symNames[] = {"Pgm", "Block", "Stmts", "Stmt", "Astmt",
                           "Y", "Ostmt", "Wstmt", "Fstmt", "Else2",
                           "Elist", "Elist2", "Eprime", "E", "Tprime",
                           "T", "F", "Pexpr", "Fatom", "Opadd", "Opmul", "$", 
-                          "kwdprog", "brace1", "brace2", "semi", "id", "equal", 
-                          "kwdinput", "kwdprint", "paren1", "paren2",
+                          "kwdprog", "brace1", "brace2", "semi", "ident", "equal", 
+                          "kwdinput", "kwdprint", "parens1", "parens2",
                           "kwdwhile", "kwdif", "kwdelseif", "kwdelse",
-                          "comma", "SymbInt", "SymbFloat", "string",
+                          "comma", "int", "float", "string",
                           "plus", "minus", "aster", "slash", "caret", "epsilon"};
 
 //3d LL Prediction Matrix
 list<symbols> Matrix[23][21];
 
 //Function Prototypes
-void readStream(queue<symbols> charStream);
+void readStream(queue<symbols>& charStream);
 void initMatrix(list<symbols> box[][21]);
+
+class node
+{
+ public:
+    node(symbols symb): mySymbol{symb} {}   
+    void addKid(symbols symb)
+    {
+        node* child = new node(symb);
+        children.push_back(child); 
+    }
+    node* getFirstChild()
+    {
+        return children.front();
+    }
+ private:
+    list<node*> children;
+    symbols mySymbol;   
+};
 
 int main()
 {
@@ -40,19 +58,88 @@ int main()
 
     //Set up input stream
     queue<symbols> charStream;
+    readStream(charStream);
+    
+    //Add $ to back of input stream
+    charStream.push(symbols::$);
 
     //Bottom of stack is always $
     //Followed by Start Symbol (Pgm)
     LLStack.push(symbols::$);
     LLStack.push(symbols::Pgm);
 
-    //Example code showing access and printing from matrix
-    // cout << symNames[Matrix[0][0].front()] << endl;
-    //Matrix[0][0].pop_front();
-    //cout << symNames[Matrix[0][0].front()] << endl;
-    //Matrix[0][0].pop_front();
+    //Create root of tree with start symbol
+    node root(symbols::Pgm);
+    node* parent = &root;
+    node* current = &root;
+ 
+    int childNum = 0;   
+    while(!LLStack.empty())
+    {
+        if(LLStack.top() == 45)  //Epsilon check
+	{ 
+            LLStack.pop();
+            continue;
+        }
+        //1st compare the top of stack to front of queue
+        //if they match pop them both
+        if(LLStack.top() == charStream.front())
+        {
+            cout << "LLStack top: " << symNames[LLStack.top()] << endl;
+            cout << "charStream front: " << symNames[charStream.front()] << endl;        
+            LLStack.pop();
+            charStream.pop();
+            cout << "They match, popping." << endl << endl;
 
-    readStream(charStream);
+            //Move to the next kid
+            childNum++;
+            auto it = parent->children.begin();
+            for(int i = 1; i < childNum; ++i)
+            {
+                ++it;   
+            }            
+            
+            current = *it;
+            
+            continue;
+        }
+        cout << "LLStack top: " << symNames[LLStack.top()] << endl;
+        cout << "charStream front: " << symNames[charStream.front()] << endl << endl;
+
+        //x value = LLStack top before pop, y value = charStream front
+        //store these two, pop from LLStack, and push onto LLStack
+        //from the matrix at these coordinates from right to left (backwards)
+        
+        int xcoord = LLStack.top();
+        int ycoord = charStream.front() - 22; //We use -22 so that we don't have to make a second table
+       // cout << "x: " << xcoord << endl;
+       // cout << "y: " << ycoord << endl << endl;
+
+        LLStack.pop();
+        
+        //these coordinates *should* hold symbols, if they don't we throw an error
+        if(Matrix[xcoord][ycoord].empty())
+        {
+            cout << "Matrix Location is empty!" << endl;
+            break;
+        }
+        for(auto it = Matrix[xcoord][ycoord].rbegin(); it != Matrix[xcoord][ycoord].rend(); ++it)
+        {
+            LLStack.push(*it);
+            cout << "Pushing to stack: " << symNames[*it] << endl;
+            //Add these as children
+            current->addKid(*it); 
+        }
+        cout << endl;
+        
+        //set parent to current then current to the first child
+        parent = current;
+        current = current->getFirstChild();
+        childNum = 1;
+    }
+    //ADD POINTERS TO PARENT NODES INTO A STACK AS WE CHANGE THEM SO WE CAN NAVIGATE BACK
+    //UP THROUGH THE TREE
+    cout << "Parsing complete! The Syntax is correct!" << endl;
 
     return 0;
 }
@@ -70,19 +157,19 @@ void initMatrix(list<symbols> box[][21])
 
     box[2][4].push_front(symbols::Stmts);
     box[2][4].push_front(symbols::semi);
-    box[2][4].push_front(symbols::Stmts);
+    box[2][4].push_front(symbols::Stmt);
 
     box[2][7].push_front(symbols::Stmts);
     box[2][7].push_front(symbols::semi);
-    box[2][7].push_front(symbols::Stmts);
+    box[2][7].push_front(symbols::Stmt);
 
     box[2][10].push_front(symbols::Stmts);
     box[2][10].push_front(symbols::semi);
-    box[2][10].push_front(symbols::Stmts);
+    box[2][10].push_front(symbols::Stmt);
 
     box[2][11].push_front(symbols::Stmts);
     box[2][11].push_front(symbols::semi);
-    box[2][11].push_front(symbols::Stmts);
+    box[2][11].push_front(symbols::Stmt);
 
     box[3][4].push_front(symbols::Astmt);
 
@@ -228,11 +315,11 @@ void initMatrix(list<symbols> box[][21])
 
     box[16][8].push_front(symbols::Pexpr);
 
-    box[16][15].push_front(symbols::Pexpr);
+    box[16][15].push_front(symbols::Fatom);
     
-    box[16][16].push_front(symbols::Pexpr);
+    box[16][16].push_front(symbols::Fatom);
 
-    box[16][17].push_front(symbols::Pexpr);
+    box[16][17].push_front(symbols::Fatom);
 
     //Pexpr
     box[17][8].push_front(symbols::paren2);
@@ -259,7 +346,7 @@ void initMatrix(list<symbols> box[][21])
     box[20][22].push_front(symbols::caret);
 }
 
-void readStream(queue<symbols> charStream)
+void readStream(queue<symbols>& charStream)
 {
     char x;
     std::string word;
@@ -293,24 +380,18 @@ void readStream(queue<symbols> charStream)
 		word = "";
 		continue;
             }
-           // cout << "The word grabbed is: ";
-           // cout << word << endl;
             
             //Code to store words here
             int wordLocation;
             for(wordLocation = 0; wordLocation < 46; wordLocation++)
 	    {
-		cout << wordLocation << ": " << symNames[wordLocation] << " " << word << endl;
       		if(strcmp(symNames[wordLocation], word.c_str()) == 0)
 		{
-		    cout << symNames[wordLocation] << endl;
+		   //cout << symNames[wordLocation] << endl;
                     break;
 	        }
             }
 	    charStream.push(symbols(wordLocation));
-            
-            cout << charStream.front() << endl;
-	    charStream.pop();
 
 	    spaceCount = 0;
             word = "";
@@ -319,7 +400,8 @@ void readStream(queue<symbols> charStream)
 
         if(spaceCount == 2)
         {
-            word += x;                    	    
+            if(x != ' ')
+                word += x;                    	    
         }
     }
 }
