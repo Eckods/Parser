@@ -98,7 +98,7 @@ void parseMachine()
 	{
 
 		// If end of file, pop off stack and done
-		if (LLStack.top().name == "$")
+		if (LLStack.top().name == "$" && tokens.empty())
 		{
 			LLStack.pop();
 		}
@@ -110,7 +110,10 @@ void parseMachine()
 				tokens.pop();
 			}
 			else
+			{
 				cout << "Error on line number: " << tokens.front().lineNum << " with token:  " << tokens.front().name << endl;
+				exit(-1);
+			}
 		}
 
 		else
@@ -126,6 +129,12 @@ void performRule(int rule)
 
 	switch (rule)
 	{
+		case 0: // Cell is empty
+		{
+			cout << "Error on line number: " << tokens.front().lineNum << " with token:  " << tokens.front().name << endl;
+			exit(-1);
+			break;
+		}
 		case 1: // Pgm = kwdprog Block
 		{
 			Syms Block = { "Block", false };
