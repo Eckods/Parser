@@ -186,9 +186,9 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(Stmts);
 
 		LLStack.pop();
-		LLStack.push(Stmt);
-		LLStack.push(semi);
 		LLStack.push(Stmts);
+		LLStack.push(semi);
+		LLStack.push(Stmt);	
 		break;
 
 
@@ -240,9 +240,10 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(Y);
 
 		LLStack.pop();
-		LLStack.push(id);
-		LLStack.push(equal);
 		LLStack.push(Y);
+		LLStack.push(equal);
+		LLStack.push(id);
+
 		break;
 
 	}
@@ -276,10 +277,10 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(paren2);
 
 		LLStack.pop();
-		LLStack.push(kwdinput);
-		LLStack.push(paren1);
+		LLStack.push(paren2);
 		LLStack.push(Elist);
 		LLStack.push(paren1);
+		LLStack.push(kwdinput);
 		break;
 	}
 	case 13: // Wstmt = kwdwhile Pexpr Block
@@ -292,9 +293,9 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(Block);
 
 		LLStack.pop();
-		LLStack.push(kwdwhile);
-		LLStack.push(Pexpr);
 		LLStack.push(Block);
+		LLStack.push(Pexpr);
+		LLStack.push(kwdwhile);
 		break;
 	}
 	case 14: // Fstmt = kwdif Pexpr Block Else2
@@ -310,10 +311,11 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(Else2);
 
 		LLStack.pop();
-		LLStack.push(kwdif);
-		LLStack.push(Pexpr);
+		LLStack.push(Else2);
 		LLStack.push(Block);
-		LLStack.push(Else2); 
+		LLStack.push(Pexpr);
+		LLStack.push(kwdif);
+
 		break;
 	}
 	case 15: // Else2 = eps
@@ -334,10 +336,11 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(Else2);
 
 		LLStack.pop();
-		LLStack.push(kwdelseif);
-		LLStack.push(Pexpr);
-		LLStack.push(Block);
 		LLStack.push(Else2);
+		LLStack.push(Block);
+		LLStack.push(Pexpr);
+		LLStack.push(kwdelseif);
+
 		break;
 	}
 	case 17: //Else2 = kwdelse Block
@@ -349,8 +352,8 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(Block);
 
 		LLStack.pop();
-		LLStack.push(kwdelse);
 		LLStack.push(Block);
+		LLStack.push(kwdelse);
 		break;
 	}
 	case 18: // Elist = E Elist2
@@ -362,8 +365,8 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(Elist2);
 
 		LLStack.pop();
-		LLStack.push(E);
 		LLStack.push(Elist2);
+		LLStack.push(E);
 		break;
 	}
 	case 19: // Elist = eps
@@ -380,8 +383,8 @@ void performRule(int rule)
 		LLStack.top().kids.push_back(Elist);
 
 		LLStack.pop();
-		LLStack.push(comma);
 		LLStack.push(Elist);
+		LLStack.push(comma);
 		break;
 	}
 
