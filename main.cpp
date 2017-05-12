@@ -33,7 +33,6 @@ struct Node {
 	int position = 0;
 };
 
-int tokenCount;
 queue<Tokens> tokens;
 stack<Syms> LLStack;
 
@@ -79,7 +78,6 @@ int main()
 	// Tokenize the stream file
 	cout << "Converting lexer output into tokens" << endl;
 	tokens = tokenize();
-	tokenCount = 0;
 
 	// Set up LL Parsing Stack
 	Syms eof{ "$", true };
@@ -229,16 +227,16 @@ void performRule(int rule)
 		}
 		case 12: // Ostmt = kwdprint paren1 Elist paren2
 		{
-			Syms kwdinput = { "kwdinput", true };
-			Syms paren1 = { "paren1", true };
+			Syms kwdprint = { "kwdprint", true };
+			Syms paren1 = { "parens1", true };
 			Syms Elist = { "Elist", false };
-			Syms paren2 = { "paren2", true };
+			Syms paren2 = { "parens2", true };
 
 			LLStack.pop();
 			LLStack.push(paren2);
 			LLStack.push(Elist);
 			LLStack.push(paren1);
-			LLStack.push(kwdinput);
+			LLStack.push(kwdprint);
 			break;
 		}
 		case 13: // Wstmt = kwdwhile Pexpr Block
@@ -299,7 +297,7 @@ void performRule(int rule)
 		case 18: // Elist = E Elist2
 		{
 			Syms E = { "E", false };
-			Syms Elist2 = { "Elist2" };
+			Syms Elist2 = { "Elist2", false};
 
 			LLStack.pop();
 			LLStack.push(Elist2);
