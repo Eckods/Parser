@@ -3,6 +3,7 @@
 #include <stack>
 #include <list>
 #include <queue>
+#include <deque>
 #include <string>
 using namespace std;
 
@@ -35,14 +36,58 @@ class node
 {
  public:
     node(symbols symb): mySymbol{symb} {}   
-    void addKid(symbols symb)
+    node* addKid(symbols symb)
     {
         node* child = new node(symb);
         children.push_back(child); 
+        return child;
     }
     node* getFirstChild()
     {
         return children.front();
+    }
+    std::__1::__list_iterator<node *, void *> getIter()
+    {
+        auto it = children.begin();
+        return it;
+    }
+
+    std::__1::__list_iterator<node *, void *> getIterEnd()
+    {
+        auto it = children.end();
+        return it;
+    }
+
+    void preOrderPrint(node* root)
+    {   
+        cout << symNames[root->getSymbol()] << endl;
+
+        if(children.empty())
+        {
+            cout << "Empty children list" << endl;
+            return;
+        }
+
+        for(auto iter = children.begin(); iter!=children.end(); ++iter)
+        {
+            cout << symNames[(*iter)->getSymbol()] << endl;
+        }
+
+        for(auto iter = children.begin(); iter!=children.end(); ++iter)
+        {
+            preOrderPrint((*iter));
+        }
+    }
+
+    symbols getSymbol()
+    {
+        return mySymbol; 
+    }
+
+    void addNull()
+    { 
+        node* nNode = nullptr;
+        children.push_back(nNode);      
     }
  private:
     list<node*> children;
@@ -72,13 +117,24 @@ int main()
     node root(symbols::Pgm);
     node* parent = &root;
     node* current = &root;
+    
+    //Breadth first queue
+    deque<node*> bfs;    
+    bfs.push_front(current);
  
-    int childNum = 0;   
+    //Stack to reverse input
+    stack<node*> reverseStack;
+
     while(!LLStack.empty())
     {
         if(LLStack.top() == 45)  //Epsilon check
 	{ 
             LLStack.pop();
+
+            //Move to the next kid
+            bfs.pop_front();
+            current = bfs.front();       
+
             continue;
         }
         //1st compare the top of stack to front of queue
@@ -92,14 +148,8 @@ int main()
             cout << "They match, popping." << endl << endl;
 
             //Move to the next kid
-            childNum++;
-            auto it = parent->children.begin();
-            for(int i = 1; i < childNum; ++i)
-            {
-                ++it;   
-            }            
-            
-            current = *it;
+            bfs.pop_front();
+            current = bfs.front();       
             
             continue;
         }
@@ -116,6 +166,8 @@ int main()
        // cout << "y: " << ycoord << endl << endl;
 
         LLStack.pop();
+
+        bfs.pop_front();
         
         //these coordinates *should* hold symbols, if they don't we throw an error
         if(Matrix[xcoord][ycoord].empty())
@@ -126,19 +178,29 @@ int main()
         for(auto it = Matrix[xcoord][ycoord].rbegin(); it != Matrix[xcoord][ycoord].rend(); ++it)
         {
             LLStack.push(*it);
-            cout << "Pushing to stack: " << symNames[*it] << endl;
+            cout << "Pushing to stack: " << symNames[*it];
             //Add these as children
-            current->addKid(*it); 
+            node* temp = current->addKid(*it);
+            cout << endl << "Adding " << symNames[*it] << " as child to " << symNames[current->getSymbol()] << endl << endl;
+            
+            //add these to the queue to access as a breadth first search 
+            bfs.push_front(temp);
+           // reverseStack.push(temp);
         }
+/*
+        while(!reverseStack.empty())
+        { 
+            bfs.push(reverseStack.top());
+            reverseStack.pop();
+        }
+*/
+        current->addNull();
+        current = bfs.front();
         cout << endl;
-        
-        //set parent to current then current to the first child
-        parent = current;
-        current = current->getFirstChild();
-        childNum = 1;
     }
-    //ADD POINTERS TO PARENT NODES INTO A STACK AS WE CHANGE THEM SO WE CAN NAVIGATE BACK
-    //UP THROUGH THE TREE
+    node* print = &root;
+    root.preOrderPrint(print);
+
     cout << "Parsing complete! The Syntax is correct!" << endl;
 
     return 0;
