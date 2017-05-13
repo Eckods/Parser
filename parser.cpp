@@ -149,7 +149,14 @@ int main()
 
             //Move to the next kid
             bfs.pop_front();
-            current = bfs.front();       
+			
+			if (bfs.empty()) {
+				LLStack.pop();
+				charStream.pop();
+				break;
+			}
+			else
+				current = bfs.front();     
             
             continue;
         }
