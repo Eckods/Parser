@@ -71,36 +71,31 @@ class node
 		for (auto iter = root->children.begin(); iter != root->children.end(); ++iter)
 		{
 			//cout << symNames[(*iter)->getSymbol()] << endl;
-			if (getSymbol() <= 21 && root != NULL)
-			{
-				if (count == 1) {
-					$1 = *iter;
-					count = 1;
-					preOrderPrint($1);
-					count = 1;
-				}
-				else if (count == 2) {
-					$2 = *iter;
-					count = 1;
-					preOrderPrint($2);
-					count = 2;
-				}
-				else if (count == 3) {
-					$3 = *iter;
-					count = 1;
-					preOrderPrint($3);
-					count = 3;
-				}
-				else if (count == 4) {
-					$4 = *iter;
-					count = 1;
-					preOrderPrint($4);
-					count = 4;
-				}
-				count++;
+			if (count == 1) {
+				$1 = *iter;
+				count = 1;
+				preOrderPrint($1);
+				count = 1;
 			}
-			else
-				break;
+			else if (count == 2) {
+				$2 = *iter;
+				count = 1;
+				preOrderPrint($2);
+				count = 2;
+			}
+			else if (count == 3) {
+				$3 = *iter;
+				count = 1;
+				preOrderPrint($3);
+				count = 3;
+			}
+			else if (count == 4) {
+				$4 = *iter;
+				count = 1;
+				preOrderPrint($4);
+				count = 4;
+			}
+			count++;
 		}
 
 /*		for (auto iter = children.begin(); iter != children.end(); ++iter)
