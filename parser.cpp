@@ -58,40 +58,80 @@ class node
         return it;
     }
 */
-    void preOrderPrint(node* root)
-    {   
-        cout << symNames[root->getSymbol()] << endl;
+	void preOrderPrint(node* root)
+	{
+		if (children.empty() || root == NULL)
+		{
+			//cout << "Empty children list" << endl;
+			return;
+		}
 
-        if(children.empty())
-        {
-            cout << "Empty children list" << endl;
-            return;
-        }
+		cout << symNames[root->getSymbol()] << endl;
 
-        for(auto iter = children.begin(); iter!=children.end(); ++iter)
-        {
-            cout << symNames[(*iter)->getSymbol()] << endl;
-        }
+		for (auto iter = root->children.begin(); iter != root->children.end(); ++iter)
+		{
+			//cout << symNames[(*iter)->getSymbol()] << endl;
+			if (getSymbol() <= 21 && root != NULL)
+			{
+				if (count == 1) {
+					$1 = *iter;
+					count = 1;
+					preOrderPrint($1);
+					count = 1;
+				}
+				else if (count == 2) {
+					$2 = *iter;
+					count = 1;
+					preOrderPrint($2);
+					count = 2;
+				}
+				else if (count == 3) {
+					$3 = *iter;
+					count = 1;
+					preOrderPrint($3);
+					count = 3;
+				}
+				else if (count == 4) {
+					$4 = *iter;
+					count = 1;
+					preOrderPrint($4);
+					count = 4;
+				}
+				count++;
+			}
+			else
+				break;
+		}
 
-        for(auto iter = children.begin(); iter!=children.end(); ++iter)
-        {
-            preOrderPrint((*iter));
-        }
-    }
+/*		for (auto iter = children.begin(); iter != children.end(); ++iter)
+		{
+			preOrderPrint((*iter));
+		}*/
+	}
 
-    symbols getSymbol()
-    {
-        return mySymbol; 
-    }
+	symbols getSymbol()
+	{
+		return mySymbol;
+	}
 
-    void addNull()
-    { 
-        node* nNode = nullptr;
-        children.push_back(nNode);      
-    }
- private:
-    list<node*> children;
-    symbols mySymbol;   
+	void addNull()
+	{
+		node* nNode = nullptr;
+		children.push_back(nNode);
+	}
+
+	int getChildCount()
+	{
+		return children.size();
+	}
+private:
+	list<node*> children;
+	node* $1;
+	node* $2;
+	node* $3;
+	node* $4;
+	int count = 1;
+	symbols mySymbol;
 };
 
 int main()
