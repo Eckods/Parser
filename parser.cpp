@@ -46,7 +46,7 @@ class node
     {
         return children.front();
     }
-    std::__1::__list_iterator<node *, void *> getIter()
+ /*   std::__1::__list_iterator<node *, void *> getIter()
     {
         auto it = children.begin();
         return it;
@@ -57,7 +57,7 @@ class node
         auto it = children.end();
         return it;
     }
-
+*/
     void preOrderPrint(node* root)
     {   
         cout << symNames[root->getSymbol()] << endl;
