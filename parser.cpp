@@ -66,11 +66,9 @@ class node
 			return;
 		}
 
-		cout << symNames[root->getSymbol()] << endl;
-
 		for (auto iter = root->children.begin(); iter != root->children.end(); ++iter)
 		{
-			//cout << symNames[(*iter)->getSymbol()] << endl;
+			//Store and print up to 4 kids of each Node
 			if (count == 1) {
 				$1 = *iter;
 				count = 1;
@@ -98,6 +96,7 @@ class node
 			count++;
 		}
 
+		cout << symNames[root->getSymbol()] << endl;
 /*		for (auto iter = children.begin(); iter != children.end(); ++iter)
 		{
 			preOrderPrint((*iter));
