@@ -1,5 +1,5 @@
-Raul Esquivias, Steve _______, David ________
-CPSC 311
+Raul Esquivias, Steve Sanchez, David Moreno
+CPSC 323
 Charles Ciska
 Language & Compiler Design Project 2
 
@@ -10,4 +10,8 @@ Issues:  Tree traversal has brought several issues in the form of segmentation f
 Compiling and Running: Compiled and Tested with c++11. In terminal, the proper command is as follows:
                        g++ -std=c++11 parser.cpp
 
-a.out file included for convenience.
+Files Included:
+	parser.cpp
+  stream.txt
+  a.out -included for convenience
+  README.txt
