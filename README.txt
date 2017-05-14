@@ -18,3 +18,5 @@ Files Included:
 	A3Example1-Output.txt
 	A3Example2-Output.txt
 	A3Example3-Output.txt
+	Example1.txt
+	Example2.txt
