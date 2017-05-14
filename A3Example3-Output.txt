@@ -1,0 +1,300 @@
+Pushing to stack: T
+Adding T as child to Eprime
+
+Pushing to stack: Opadd
+Adding Opadd as child to Eprime
+
+
+LLStack top: Opadd
+charStream front: plus
+
+Pushing to stack: plus
+Adding plus as child to Opadd
+
+
+LLStack top: plus
+charStream front: plus
+They match, popping.
+
+LLStack top: T
+charStream front: ident
+
+Pushing to stack: Tprime
+Adding Tprime as child to T
+
+Pushing to stack: F
+Adding F as child to T
+
+
+LLStack top: F
+charStream front: ident
+
+Pushing to stack: Fatom
+Adding Fatom as child to F
+
+
+LLStack top: Fatom
+charStream front: ident
+
+Pushing to stack: ident
+Adding ident as child to Fatom
+
+
+LLStack top: ident
+charStream front: ident
+They match, popping.
+
+LLStack top: Tprime
+charStream front: aster
+
+Pushing to stack: Tprime
+Adding Tprime as child to Tprime
+
+Pushing to stack: F
+Adding F as child to Tprime
+
+Pushing to stack: Opmul
+Adding Opmul as child to Tprime
+
+
+LLStack top: Opmul
+charStream front: aster
+
+Pushing to stack: aster
+Adding aster as child to Opmul
+
+
+LLStack top: aster
+charStream front: aster
+They match, popping.
+
+LLStack top: F
+charStream front: ident
+
+Pushing to stack: Fatom
+Adding Fatom as child to F
+
+
+LLStack top: Fatom
+charStream front: ident
+
+Pushing to stack: ident
+Adding ident as child to Fatom
+
+
+LLStack top: ident
+charStream front: ident
+They match, popping.
+
+LLStack top: Tprime
+charStream front: parens2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Tprime
+
+
+LLStack top: Eprime
+charStream front: parens2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Eprime
+
+
+LLStack top: parens2
+charStream front: parens2
+They match, popping.
+
+LLStack top: Tprime
+charStream front: caret
+
+Pushing to stack: Tprime
+Adding Tprime as child to Tprime
+
+Pushing to stack: F
+Adding F as child to Tprime
+
+Pushing to stack: Opmul
+Adding Opmul as child to Tprime
+
+
+LLStack top: Opmul
+charStream front: caret
+
+Pushing to stack: caret
+Adding caret as child to Opmul
+
+
+LLStack top: caret
+charStream front: caret
+They match, popping.
+
+LLStack top: F
+charStream front: float
+
+Pushing to stack: Fatom
+Adding Fatom as child to F
+
+
+LLStack top: Fatom
+charStream front: float
+
+Pushing to stack: float
+Adding float as child to Fatom
+
+
+LLStack top: float
+charStream front: float
+They match, popping.
+
+LLStack top: Tprime
+charStream front: parens2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Tprime
+
+
+LLStack top: Eprime
+charStream front: parens2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Eprime
+
+
+LLStack top: Elist2
+charStream front: parens2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Elist2
+
+
+LLStack top: parens2
+charStream front: parens2
+They match, popping.
+
+LLStack top: semi
+charStream front: semi
+They match, popping.
+
+LLStack top: Stmts
+charStream front: brace2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Stmts
+
+
+LLStack top: brace2
+charStream front: brace2
+They match, popping.
+
+brace2
+epsilon
+Stmts
+semi
+parens2
+epsilon
+Elist2
+epsilon
+Eprime
+epsilon
+Tprime
+float
+Fatom
+F
+caret
+Opmul
+Tprime
+parens2
+epsilon
+Eprime
+epsilon
+Tprime
+ident
+Fatom
+F
+aster
+Opmul
+Tprime
+ident
+Fatom
+F
+T
+plus
+Opadd
+Eprime
+epsilon
+Tprime
+ident
+Fatom
+F
+aster
+Opmul
+Tprime
+ident
+Fatom
+F
+T
+E
+parens1
+Pexpr
+F
+T
+E
+Elist
+comma
+Elist2
+epsilon
+Eprime
+epsilon
+Tprime
+string
+Fatom
+F
+T
+E
+Elist
+parens1
+kwdprint
+Ostmt
+Stmt
+Stmts
+semi
+kwdinput
+Y
+equal
+ident
+Astmt
+Stmt
+Stmts
+semi
+kwdinput
+Y
+equal
+ident
+Astmt
+Stmt
+Stmts
+semi
+parens2
+epsilon
+Elist2
+epsilon
+Eprime
+epsilon
+Tprime
+string
+Fatom
+F
+T
+E
+Elist
+parens1
+kwdprint
+Ostmt
+Stmt
+Stmts
+brace1
+Block
+kwdprog
+Pgm
+Parsing complete! The Syntax is correct!
+Press any key to continue . . .

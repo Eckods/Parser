@@ -1,0 +1,300 @@
+Pushing to stack: T
+Adding T as child to E
+
+
+LLStack top: T
+charStream front: int
+
+Pushing to stack: Tprime
+Adding Tprime as child to T
+
+Pushing to stack: F
+Adding F as child to T
+
+
+LLStack top: F
+charStream front: int
+
+Pushing to stack: Fatom
+Adding Fatom as child to F
+
+
+LLStack top: Fatom
+charStream front: int
+
+Pushing to stack: int
+Adding int as child to Fatom
+
+
+LLStack top: int
+charStream front: int
+They match, popping.
+
+LLStack top: Tprime
+charStream front: comma
+
+Pushing to stack: epsilon
+Adding epsilon as child to Tprime
+
+
+LLStack top: Eprime
+charStream front: comma
+
+Pushing to stack: epsilon
+Adding epsilon as child to Eprime
+
+
+LLStack top: Elist2
+charStream front: comma
+
+Pushing to stack: Elist
+Adding Elist as child to Elist2
+
+Pushing to stack: comma
+Adding comma as child to Elist2
+
+
+LLStack top: comma
+charStream front: comma
+They match, popping.
+
+LLStack top: Elist
+charStream front: string
+
+Pushing to stack: Elist2
+Adding Elist2 as child to Elist
+
+Pushing to stack: E
+Adding E as child to Elist
+
+
+LLStack top: E
+charStream front: string
+
+Pushing to stack: Eprime
+Adding Eprime as child to E
+
+Pushing to stack: T
+Adding T as child to E
+
+
+LLStack top: T
+charStream front: string
+
+Pushing to stack: Tprime
+Adding Tprime as child to T
+
+Pushing to stack: F
+Adding F as child to T
+
+
+LLStack top: F
+charStream front: string
+
+Pushing to stack: Fatom
+Adding Fatom as child to F
+
+
+LLStack top: Fatom
+charStream front: string
+
+Pushing to stack: string
+Adding string as child to Fatom
+
+
+LLStack top: string
+charStream front: string
+They match, popping.
+
+LLStack top: Tprime
+charStream front: comma
+
+Pushing to stack: epsilon
+Adding epsilon as child to Tprime
+
+
+LLStack top: Eprime
+charStream front: comma
+
+Pushing to stack: epsilon
+Adding epsilon as child to Eprime
+
+
+LLStack top: Elist2
+charStream front: comma
+
+Pushing to stack: Elist
+Adding Elist as child to Elist2
+
+Pushing to stack: comma
+Adding comma as child to Elist2
+
+
+LLStack top: comma
+charStream front: comma
+They match, popping.
+
+LLStack top: Elist
+charStream front: int
+
+Pushing to stack: Elist2
+Adding Elist2 as child to Elist
+
+Pushing to stack: E
+Adding E as child to Elist
+
+
+LLStack top: E
+charStream front: int
+
+Pushing to stack: Eprime
+Adding Eprime as child to E
+
+Pushing to stack: T
+Adding T as child to E
+
+
+LLStack top: T
+charStream front: int
+
+Pushing to stack: Tprime
+Adding Tprime as child to T
+
+Pushing to stack: F
+Adding F as child to T
+
+
+LLStack top: F
+charStream front: int
+
+Pushing to stack: Fatom
+Adding Fatom as child to F
+
+
+LLStack top: Fatom
+charStream front: int
+
+Pushing to stack: int
+Adding int as child to Fatom
+
+
+LLStack top: int
+charStream front: int
+They match, popping.
+
+LLStack top: Tprime
+charStream front: parens2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Tprime
+
+
+LLStack top: Eprime
+charStream front: parens2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Eprime
+
+
+LLStack top: Elist2
+charStream front: parens2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Elist2
+
+
+LLStack top: parens2
+charStream front: parens2
+They match, popping.
+
+LLStack top: semi
+charStream front: semi
+They match, popping.
+
+LLStack top: Stmts
+charStream front: brace2
+
+Pushing to stack: epsilon
+Adding epsilon as child to Stmts
+
+
+LLStack top: brace2
+charStream front: brace2
+They match, popping.
+
+brace2
+epsilon
+Stmts
+semi
+parens2
+epsilon
+Elist2
+epsilon
+Eprime
+epsilon
+Tprime
+int
+Fatom
+F
+T
+E
+Elist
+comma
+Elist2
+epsilon
+Eprime
+epsilon
+Tprime
+string
+Fatom
+F
+T
+E
+Elist
+comma
+Elist2
+epsilon
+Eprime
+epsilon
+Tprime
+int
+Fatom
+F
+T
+E
+Elist
+comma
+Elist2
+epsilon
+Eprime
+epsilon
+Tprime
+string
+Fatom
+F
+T
+E
+Elist
+comma
+Elist2
+epsilon
+Eprime
+epsilon
+Tprime
+string
+Fatom
+F
+T
+E
+Elist
+parens1
+kwdprint
+Ostmt
+Stmt
+Stmts
+brace1
+Block
+kwdprog
+Pgm
+Parsing complete! The Syntax is correct!
+Press any key to continue . . .
