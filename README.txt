@@ -12,6 +12,6 @@ Compiling and Running: Compiled and Tested with c++11. In terminal, the proper c
 
 Files Included:
 	parser.cpp
-  stream.txt
-  a.out -included for convenience
-  README.txt
+  	stream.txt
+ 	a.out -included for convenience
+  	README.txt
