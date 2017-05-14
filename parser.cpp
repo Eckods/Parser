@@ -214,7 +214,7 @@ int main()
         if(Matrix[xcoord][ycoord].empty())
         {
             cout << "Matrix Location is empty!" << endl;
-            break;
+            return 0;
         }
         for(auto it = Matrix[xcoord][ycoord].rbegin(); it != Matrix[xcoord][ycoord].rend(); ++it)
         {
